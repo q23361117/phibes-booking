@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>菲比斯美妍肌密｜線上預約</title>
+  <title>菲比斯美妍｜線上預約</title>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
     * {
@@ -78,23 +80,6 @@
       align-items: flex-start;
     }
 
-    .page::before {
-      content: "";
-      position: fixed;
-      right: -65px;
-      bottom: 80px;
-      width: 230px;
-      height: 330px;
-      opacity: 0.28;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse at 50% 90%, transparent 0 44%, rgba(191, 136, 59, 0.8) 45% 46%, transparent 47%),
-        linear-gradient(120deg, transparent 46%, rgba(191, 136, 59, 0.7) 47%, transparent 49%),
-        linear-gradient(60deg, transparent 50%, rgba(191, 136, 59, 0.55) 51%, transparent 53%);
-      border-radius: 45%;
-      transform: rotate(-18deg);
-    }
-
     .card {
       width: 100%;
       max-width: 540px;
@@ -132,8 +117,7 @@
       width: 240px;
       height: 240px;
       border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(217, 165, 83, 0.22), transparent 66%);
+      background: radial-gradient(circle, rgba(217, 165, 83, 0.22), transparent 66%);
       pointer-events: none;
     }
 
@@ -319,6 +303,14 @@
       border: 1px solid rgba(195, 138, 57, 0.24);
     }
 
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      text-align: center;
+      color: #8a6242;
+    }
+
     .btn {
       width: 100%;
       margin-top: 24px;
@@ -340,6 +332,11 @@
 
     .btn:active {
       transform: scale(0.99);
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .footer {
@@ -392,7 +389,7 @@
           <img class="logo-img" src="./logo.png" alt="菲比斯美妍 Logo" />
         </div>
 
-        <h1>菲比斯美妍肌密</h1>
+        <h1>菲比斯美妍</h1>
 
         <div class="gold-line">
           <span>✦</span>
@@ -413,15 +410,15 @@
 
         <label for="service">預約項目</label>
         <select id="service" required>
-        <option value="">請選擇服務項目</option>
-        <option value="臉部保養">臉部保養</option>
-        <option value="皮膚管理">皮膚管理</option>
-        <option value="清粉刺">清粉刺</option>
-        <option value="霧眉/線條眉">霧眉 / 線條眉</option>
-        <option value="美睫">美睫</option>
-        <option value="課程諮詢">課程諮詢</option>
-        <option value="其他服務">其他服務</option>
-       </select>
+          <option value="">請選擇服務項目</option>
+          <option value="臉部保養">臉部保養</option>
+          <option value="皮膚管理">皮膚管理</option>
+          <option value="清粉刺">清粉刺</option>
+          <option value="霧眉/線條眉">霧眉 / 線條眉</option>
+          <option value="美睫">美睫</option>
+          <option value="課程諮詢">課程諮詢</option>
+          <option value="其他服務">其他服務</option>
+        </select>
 
         <div class="section-title">第一希望時間</div>
 
@@ -475,27 +472,49 @@
         <textarea id="note" placeholder="例如：想詢問課程、皮膚狀況、希望預約老師等"></textarea>
 
         <div class="notice">
-          送出後會開啟 LINE，請將預約內容傳送給我們。<br>
+          送出後會直接將預約內容傳送到 LINE 聊天室。<br>
           預約需由店家回覆確認後才算完成。
         </div>
 
-        <button class="btn" type="submit">送出預約到 LINE</button>
+        <button class="btn" id="submitBtn" type="submit">送出預約</button>
+
+        <div class="status" id="statusText">LIFF 初始化中...</div>
       </form>
 
       <div class="footer">
-        菲比斯美妍肌密｜線上預約服務<br>
+        菲比斯美妍｜線上預約服務<br>
         請勿重複送單，客服會依序回覆。
       </div>
     </div>
   </div>
 
   <script>
-    // 這裡改成你的 LINE 官方帳號網址
-    const LINE_OA_URL = "https://lin.ee/你的官方帳號連結";
+    const LIFF_ID = "2010447519-l4XMB5zO";
+    const LIFF_URL = "https://liff.line.me/2010447519-l4XMB5zO";
 
     const form = document.getElementById("bookingForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusText = document.getElementById("statusText");
 
-    form.addEventListener("submit", function (e) {
+    async function initLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID });
+
+        if (!liff.isLoggedIn()) {
+          liff.login({ redirectUri: LIFF_URL });
+          return;
+        }
+
+        statusText.textContent = "已連線 LINE，可送出預約。";
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = "LIFF 初始化失敗，請從 LINE 圖文選單重新開啟。";
+      }
+    }
+
+    initLiff();
+
+    form.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const name = document.getElementById("name").value.trim();
@@ -520,7 +539,7 @@
       }
 
       const message =
-`您好，我想預約菲比斯美妍肌密
+`您好，我想預約菲比斯美妍
 
 【線上預約資料】
 姓名：${name}
@@ -541,9 +560,33 @@ ${backupDate2 || "未填"} ${backupTime2 || ""}
 
 請協助確認是否可以預約，謝謝。`;
 
-      const encodedMessage = encodeURIComponent(message);
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "送出中...";
 
-      window.location.href = `${LINE_OA_URL}?text=${encodedMessage}`;
+        if (!liff.isInClient()) {
+          alert("請從 LINE 圖文選單開啟此頁面，才能直接送出預約訊息。");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "送出預約";
+          return;
+        }
+
+        await liff.sendMessages([
+          {
+            type: "text",
+            text: message
+          }
+        ]);
+
+        alert("預約資料已送出，請等待店家回覆確認。");
+
+        liff.closeWindow();
+      } catch (error) {
+        console.error(error);
+        alert("送出失敗，請確認是從 LINE 圖文選單開啟，或稍後再試。");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "送出預約";
+      }
     });
   </script>
 </body>
