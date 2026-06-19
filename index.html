@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>菲比斯美妍｜線上預約</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --gold-1: #f8e2a8;
+      --gold-2: #d29a45;
+      --gold-3: #9a5f22;
+      --brown: #5a351f;
+      --soft-brown: #8a6a55;
+      --cream: #fffaf2;
+      --line: rgba(190, 137, 62, 0.28);
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      color: var(--brown);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255, 238, 198, 0.85), transparent 32%),
+        radial-gradient(circle at 85% 18%, rgba(255, 250, 238, 0.9), transparent 34%),
+        radial-gradient(circle at 80% 90%, rgba(212, 159, 78, 0.18), transparent 35%),
+        linear-gradient(135deg, #fffdf8 0%, #fff7ed 45%, #f3dfc5 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(120deg, transparent 0%, transparent 35%, rgba(255,255,255,0.62) 50%, transparent 66%, transparent 100%),
+        repeating-linear-gradient(
+          115deg,
+          rgba(172, 117, 52, 0.035) 0px,
+          rgba(172, 117, 52, 0.035) 1px,
+          transparent 1px,
+          transparent 16px
+        );
+      opacity: 0.7;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      left: -18%;
+      right: -18%;
+      top: -90px;
+      height: 250px;
+      border-bottom: 2px solid rgba(190, 137, 62, 0.35);
+      border-radius: 0 0 50% 50%;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.2), rgba(214, 161, 78, 0.24), rgba(255,255,255,0.06));
+      transform: rotate(-5deg);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 26px 16px 46px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .page::before {
+      content: "";
+      position: fixed;
+      right: -65px;
+      bottom: 80px;
+      width: 230px;
+      height: 330px;
+      opacity: 0.28;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 90%, transparent 0 44%, rgba(191, 136, 59, 0.8) 45% 46%, transparent 47%),
+        linear-gradient(120deg, transparent 46%, rgba(191, 136, 59, 0.7) 47%, transparent 49%),
+        linear-gradient(60deg, transparent 50%, rgba(191, 136, 59, 0.55) 51%, transparent 53%);
+      border-radius: 45%;
+      transform: rotate(-18deg);
+    }
+
+    .card {
+      width: 100%;
+      max-width: 540px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.93), rgba(255,250,242,0.93)),
+        radial-gradient(circle at 30% 10%, rgba(255,235,190,0.5), transparent 38%);
+      border-radius: 30px;
+      padding: 30px 20px 30px;
+      box-shadow:
+        0 18px 45px rgba(104, 63, 24, 0.16),
+        inset 0 0 0 1px rgba(255,255,255,0.7);
+      border: 1px solid rgba(198, 145, 68, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: -70px;
+      top: -70px;
+      width: 190px;
+      height: 190px;
+      border: 1px solid rgba(202, 150, 71, 0.28);
+      border-radius: 50%;
+      background: rgba(255, 241, 215, 0.45);
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      right: -95px;
+      bottom: -105px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(217, 165, 83, 0.22), transparent 66%);
+      pointer-events: none;
+    }
+
+    .brand {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-bottom: 12px;
+    }
+
+    .logo-wrap {
+      width: 118px;
+      height: 118px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      padding: 8px;
+      background:
+        linear-gradient(135deg, #fffef8, #fff4dc),
+        linear-gradient(135deg, var(--gold-1), var(--gold-2), var(--gold-3));
+      border: 1px solid rgba(189, 130, 50, 0.35);
+      box-shadow:
+        0 10px 25px rgba(135, 82, 29, 0.15),
+        0 0 0 7px rgba(255, 239, 205, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+      display: block;
+      background: #fff;
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 31px;
+      letter-spacing: 4px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #895117, #d7a04b, #7b4314);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 8px 22px rgba(146, 92, 31, 0.12);
+    }
+
+    .gold-line {
+      width: 170px;
+      height: 18px;
+      margin: 8px auto 4px;
+      position: relative;
+    }
+
+    .gold-line::before,
+    .gold-line::after {
+      content: "";
+      position: absolute;
+      top: 9px;
+      width: 68px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c58b3a);
+    }
+
+    .gold-line::before {
+      left: 0;
+    }
+
+    .gold-line::after {
+      right: 0;
+      background: linear-gradient(90deg, #c58b3a, transparent);
+    }
+
+    .gold-line span {
+      position: absolute;
+      left: 50%;
+      top: 1px;
+      transform: translateX(-50%);
+      color: #b67828;
+      font-size: 14px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #76513a;
+      letter-spacing: 1px;
+    }
+
+    .subtitle strong {
+      display: block;
+      font-size: 20px;
+      color: #9b6324;
+      letter-spacing: 3px;
+      margin-bottom: 4px;
+    }
+
+    form {
+      position: relative;
+      z-index: 2;
+      margin-top: 8px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      font-size: 14px;
+      font-weight: 900;
+      color: #684127;
+      letter-spacing: 0.8px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(188, 133, 62, 0.35);
+      background: rgba(255, 252, 247, 0.86);
+      font-size: 16px;
+      color: #3f281c;
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(117, 82, 55, 0.58);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #c38a39;
+      background: #fffefd;
+      box-shadow:
+        0 0 0 4px rgba(213, 163, 84, 0.16),
+        inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .section-title {
+      margin-top: 20px;
+      padding: 11px 14px;
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, rgba(255,246,226,0.95), rgba(255,255,255,0.75)),
+        linear-gradient(135deg, rgba(213, 162, 78, 0.18), transparent);
+      color: #8b571f;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      border: 1px solid rgba(198, 145, 68, 0.25);
+      box-shadow: 0 5px 15px rgba(151, 94, 35, 0.06);
+    }
+
+    .notice {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, rgba(255,246,229,0.95), rgba(255,255,255,0.72));
+      color: #7a5137;
+      font-size: 14px;
+      line-height: 1.8;
+      border: 1px solid rgba(195, 138, 57, 0.24);
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 17px;
+      border: 0;
+      border-radius: 20px;
+      background:
+        linear-gradient(135deg, #8b531c, #d7a04a 45%, #f7df9f 60%, #9b6023);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      box-shadow:
+        0 12px 26px rgba(137, 82, 27, 0.27),
+        inset 0 1px 0 rgba(255,255,255,0.42);
+      text-shadow: 0 1px 3px rgba(91, 49, 10, 0.35);
+    }
+
+    .btn:active {
+      transform: scale(0.99);
+    }
+
+    .footer {
+      position: relative;
+      z-index: 2;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.8;
+      color: #9a7656;
+    }
+
+    @media (max-width: 420px) {
+      .page {
+        padding: 18px 12px 36px;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .card {
+        padding: 26px 16px 28px;
+        border-radius: 26px;
+      }
+
+      .logo-wrap {
+        width: 108px;
+        height: 108px;
+      }
+
+      h1 {
+        font-size: 27px;
+        letter-spacing: 3px;
+      }
+
+      .subtitle strong {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="card">
+      <div class="brand">
+        <div class="logo-wrap">
+          <img class="logo-img" src="./logo.png" alt="菲比斯美妍 Logo" />
+        </div>
+
+        <h1>菲比斯美妍</h1>
+
+        <div class="gold-line">
+          <span>✦</span>
+        </div>
+
+        <div class="subtitle">
+          <strong>線上預約表單</strong>
+          請填寫以下資料，我們會盡快與您確認預約。
+        </div>
+      </div>
+
+      <form id="bookingForm">
+        <label for="name">姓名 / 稱呼</label>
+        <input id="name" type="text" placeholder="例如：王小姐" required />
+
+        <label for="phone">手機號碼</label>
+        <input id="phone" type="tel" placeholder="例如：0912-345-678" required />
+
+        <label for="service">預約項目</label>
+        <select id="service" required>
+          <option value="">請選擇服務項目</option>
+          <option value="臉部保養">臉部保養</option>
+          <option value="皮膚管理">皮膚管理</option>
+          <option value="清粉刺">清粉刺</option>
+          <option value="課程諮詢">課程諮詢</option>
+          <option value="其他服務">其他服務</option>
+        </select>
+
+        <div class="section-title">第一希望時間</div>
+
+        <div class="row">
+          <div>
+            <label for="date">第一希望日期</label>
+            <input id="date" type="date" required />
+          </div>
+
+          <div>
+            <label for="time">第一希望時間</label>
+            <input id="time" type="time" required />
+          </div>
+        </div>
+
+        <div class="section-title">備選時間一</div>
+
+        <div class="row">
+          <div>
+            <label for="backupDate1">備選日期一</label>
+            <input id="backupDate1" type="date" />
+          </div>
+
+          <div>
+            <label for="backupTime1">備選時間一</label>
+            <input id="backupTime1" type="time" />
+          </div>
+        </div>
+
+        <div class="section-title">備選時間二</div>
+
+        <div class="row">
+          <div>
+            <label for="backupDate2">備選日期二</label>
+            <input id="backupDate2" type="date" />
+          </div>
+
+          <div>
+            <label for="backupTime2">備選時間二</label>
+            <input id="backupTime2" type="time" />
+          </div>
+        </div>
+
+        <label for="firstVisit">來店狀態</label>
+        <select id="firstVisit">
+          <option value="第一次來店">第一次來店</option>
+          <option value="回訪客人">回訪客人</option>
+        </select>
+
+        <label for="note">備註 / 想詢問的問題</label>
+        <textarea id="note" placeholder="例如：想詢問課程、皮膚狀況、希望預約老師等"></textarea>
+
+        <div class="notice">
+          送出後會開啟 LINE，請將預約內容傳送給我們。<br>
+          預約需由店家回覆確認後才算完成。
+        </div>
+
+        <button class="btn" type="submit">送出預約到 LINE</button>
+      </form>
+
+      <div class="footer">
+        菲比斯美妍｜線上預約服務<br>
+        請勿重複送單，客服會依序回覆。
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 這裡改成你的 LINE 官方帳號網址
+    const LINE_OA_URL = "https://lin.ee/你的官方帳號連結";
+
+    const form = document.getElementById("bookingForm");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const service = document.getElementById("service").value;
+
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+
+      const backupDate1 = document.getElementById("backupDate1").value;
+      const backupTime1 = document.getElementById("backupTime1").value;
+
+      const backupDate2 = document.getElementById("backupDate2").value;
+      const backupTime2 = document.getElementById("backupTime2").value;
+
+      const firstVisit = document.getElementById("firstVisit").value;
+      const note = document.getElementById("note").value.trim();
+
+      if (!name || !phone || !service || !date || !time) {
+        alert("請完整填寫姓名、電話、服務項目、第一希望日期與第一希望時間");
+        return;
+      }
+
+      const message =
+`您好，我想預約菲比斯美妍
+
+【線上預約資料】
+姓名：${name}
+電話：${phone}
+服務項目：${service}
+
+第一希望時間：
+${date} ${time}
+
+備選時間一：
+${backupDate1 || "未填"} ${backupTime1 || ""}
+
+備選時間二：
+${backupDate2 || "未填"} ${backupTime2 || ""}
+
+來店狀態：${firstVisit}
+備註：${note || "無"}
+
+請協助確認是否可以預約，謝謝。`;
+
+      const encodedMessage = encodeURIComponent(message);
+
+      window.location.href = `${LINE_OA_URL}?text=${encodedMessage}`;
+    });
+  </script>
+</body>
+</html>
